@@ -8,7 +8,7 @@ import kotlin.math.ceil
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var binding: ActivityMainBinding
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,22 +21,33 @@ class MainActivity : AppCompatActivity() {
 
     }
     //Funcion de calculo de propinas
-    fun calculateTip() {
+    private fun calculateTip() {
         //Variable en la cual se le asigna el bindeo de la vista que recibe encadenamiento .text para pasarlo a string
         val stringInTextField = binding.costOfService.text.toString()
         // Basicamente pasamos el string de lo que pone el usuario a tipo Double con coma flotante
-        val cost = stringInTextField.toDouble()
+        val cost = stringInTextField.toDoubleOrNull()
+        if (cost == null){
+            binding.tipResult.text = ""
+            return
+        }
 
         // Variable la cual ponemos el Radiogroup y le ponemos atributo que si esta chekeado haga X funcion
-        val selectedID = binding.tipOptions.checkedRadioButtonId
-        // en este caso una variable con when que si selected id modifique el valor
-        val tipPercentage = when (selectedID) {
+
+
+        //  val selectedID = binding.tipOptions.checkedRadioButtonId
+        //
+        //        val tipPercentage = when (selectedID) {
+        //            R.id.option_twenty_percent -> 0.20
+        //            R.id.option_eighteen_percent ->0.18
+        //            else -> 0.15
+
+        val tipPercentage = when (binding.tipOptions.checkedRadioButtonId) {
             R.id.option_twenty_percent -> 0.20
             R.id.option_eighteen_percent ->0.18
             else -> 0.15
         }
         //variable la cual calcula el procentaje anterior por la variable cost
-        var tip = tipPercentage * cost
+        var tip = tipPercentage * cost!!
 
 
         //variable de redodnear si esta el switch chekeado
@@ -46,7 +57,6 @@ class MainActivity : AppCompatActivity() {
             tip = kotlin.math.ceil(tip)
         }
         //Formato para distintos tipos de monedas
-        NumberFormat.getCurrencyInstance()
         val formattedTip = NumberFormat.getCurrencyInstance().format(tip)
 
         //Bindear para que te de el resultado
